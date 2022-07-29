@@ -39,7 +39,6 @@ class Login extends React.Component {
       });
     }
     if (target.type === 'password' && targetLength < numCheck) {
-      console.log('oi');
       this.setState({
         disableBtn: true,
       });
