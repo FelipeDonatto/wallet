@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { currencyData, expenseData } from '../redux/actions';
+import { currencyData, editExpense, expenseData } from '../redux/actions';
 
 const Alimentacao = 'Alimentação';
 class WalletForm extends Component {
@@ -45,25 +45,40 @@ class WalletForm extends Component {
     const {
       currencies, value, description, currency, method, tag, id,
     } = this.state;
-    const { dispatchExpense } = this.props;
+    const { dispatchExpense, editExpenses } = this.props;
+    const btn = document.getElementById('add-expense-btn');
+    const btnText = 'Adicionar despesa';
     fetch('https://economia.awesomeapi.com.br/json/all');
-    dispatchExpense(
-      {
-        id,
+    if (btn.innerText === btnText) {
+      dispatchExpense(
+        {
+          id,
+          value,
+          description,
+          currency,
+          method,
+          tag,
+          exchangeRates: currencies,
+        },
+      );
+      this.setState((prev) => ({ value: '',
+        description: '',
+        id: prev.id + 1,
+        currency: 'USD',
+        method: 'Dinheiro',
+        tag: Alimentacao }));
+    }
+    if (btn.innerText !== btnText) {
+      editExpenses({
         value,
         description,
         currency,
         method,
         tag,
         exchangeRates: currencies,
-      },
-    );
-    this.setState((prev) => ({ value: '',
-      description: '',
-      id: prev.id + 1,
-      currency: 'USD',
-      method: 'Dinheiro',
-      tag: Alimentacao }));
+      });
+      btn.innerText = btnText;
+    }
   }
 
   render() {
@@ -105,6 +120,7 @@ class WalletForm extends Component {
         </select>
         <button
           type="button"
+          id="add-expense-btn"
           onClick={ this.handleClick }
         >
           Adicionar despesa
@@ -117,11 +133,13 @@ class WalletForm extends Component {
 WalletForm.propTypes = {
   dispatchCurrency: PropTypes.func.isRequired,
   dispatchExpense: PropTypes.func.isRequired,
+  editExpenses: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({
   dispatchCurrency: (value) => dispatch(currencyData(value)),
   dispatchExpense: (value) => dispatch(expenseData(value)),
+  editExpenses: (value) => dispatch(editExpense(value)),
 });
 
 export default connect(null, mapDispatchToProps)(WalletForm);

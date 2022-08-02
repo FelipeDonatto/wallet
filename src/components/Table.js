@@ -1,23 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { deleteExpense } from '../redux/actions';
+import { deleteExpense, idToEdit } from '../redux/actions';
 
 class Table extends Component {
+  onClickEdit = ({ target }) => {
+    const { editId } = this.props;
+    const btn = document.getElementById('add-expense-btn');
+    editId(parseInt(target.id, 0));
+    btn.innerText = 'Editar despesa';
+  }
+
   render() {
     const { state: { wallet: { expenses } } } = this.props;
     const { deleteExpenses } = this.props;
     const expenseCheck = expenses.length !== 0;
-    // const ratesValue = wallet.expenses
-    //   .map((element) => parseFloat(element.exchangeRates[element.currency].ask, 0));
-    // const expensesValue = wallet.expenses.map((element) => parseFloat(element.value));
-
-    // id:0
-    // value:"123"
-    // description:"23"
-    // currency:"USD"
-    // method:"Dinheiro"
-    // tag:"Alimentação"
 
     return (
       <table>
@@ -55,6 +52,9 @@ class Table extends Component {
               <td>
                 <button
                   type="button"
+                  id={ expense.id }
+                  data-testid="edit-btn"
+                  onClick={ (event) => this.onClickEdit(event) }
                 >
                   Editar
                 </button>
@@ -78,7 +78,8 @@ const mapStateToProps = (state) => ({
   state });
 
 const mapDispatchToProps = (dispatch) => ({
-  deleteExpenses: (email) => dispatch(deleteExpense(email)) });
+  deleteExpenses: (email) => dispatch(deleteExpense(email)),
+  editId: (value) => dispatch(idToEdit(value)) });
 
 Table.propTypes = {
   state: PropTypes.shape(
@@ -93,5 +94,6 @@ Table.propTypes = {
     }).isRequired },
   ).isRequired,
   deleteExpenses: PropTypes.func.isRequired,
+  editId: PropTypes.func.isRequired,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
