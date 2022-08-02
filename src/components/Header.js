@@ -21,7 +21,7 @@ class Header extends Component {
         </span>
         <br />
         <span data-testid="total-field">
-          {expensesSum !== 0 ? expensesSum.toFixed(2) : 0}
+          {expensesSum !== 0 ? expensesSum.toFixed(2) : parseFloat('0').toFixed(2)}
         </span>
         <span data-testid="header-currency-field">
           BRL
